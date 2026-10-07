@@ -3,7 +3,7 @@ name: Render WORKPRINT H-001
 on:
   push:
     branches:
-      - workprint-production-os-v1
+      - workprint-h001-readability-v2
     paths:
       - "video-projects/workprint-h001/**"
       - ".github/workflows/render-workprint-h001.yml"
@@ -56,11 +56,11 @@ jobs:
       - name: Extract QA frames
         working-directory: video-projects/workprint-h001
         run: |
-          ffmpeg -y -ss 1.30  -i renders/draft.mp4 -frames:v 1 qa-frames/01-audience-lock.png
-          ffmpeg -y -ss 4.50  -i renders/draft.mp4 -frames:v 1 qa-frames/02-chaos.png
-          ffmpeg -y -ss 7.85  -i renders/draft.mp4 -frames:v 1 qa-frames/03-slow.png
-          ffmpeg -y -ss 11.10 -i renders/draft.mp4 -frames:v 1 qa-frames/04-recognition.png
-          ffmpeg -y -ss 14.10 -i renders/draft.mp4 -frames:v 1 qa-frames/05-cta.png
+          ffmpeg -y -ss 1.60  -i renders/draft.mp4 -frames:v 1 qa-frames/01-audience-lock.png
+          ffmpeg -y -ss 5.20  -i renders/draft.mp4 -frames:v 1 qa-frames/02-chaos.png
+          ffmpeg -y -ss 9.30  -i renders/draft.mp4 -frames:v 1 qa-frames/03-slow.png
+          ffmpeg -y -ss 13.60 -i renders/draft.mp4 -frames:v 1 qa-frames/04-recognition.png
+          ffmpeg -y -ss 17.60 -i renders/draft.mp4 -frames:v 1 qa-frames/05-cta.png
 
       - name: Build cover from verified draft
         working-directory: video-projects/workprint-h001
