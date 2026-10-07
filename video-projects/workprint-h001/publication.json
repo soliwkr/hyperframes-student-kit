@@ -1,0 +1,23 @@
+{
+  "creative_id": "rush_paradox_v2",
+  "hook_id": "H-001",
+  "pattern_id": "P-001",
+  "campaign": "field_test_01",
+  "status": "render_candidate",
+  "caption": "Fast food can make you genuinely more capable under pressure. The harder question is whether rush-mode keeps showing up when the environment no longer requires it. This free field test compares before the job → when you got good → now. Not a diagnosis. A pattern to test.",
+  "destination": "https://workprint.soliwkr.workers.dev/patterns/rush-mode",
+  "tracking": {
+    "utm_medium": "organic",
+    "utm_campaign": "field_test_01",
+    "utm_content": "rush_paradox_v2",
+    "wp_pattern": "P-001",
+    "wp_hook": "H-001",
+    "wp_surface": "reel"
+  },
+  "targets": [
+    "tiktok",
+    "instagram_reels",
+    "youtube_shorts"
+  ],
+  "publish_mode": "human_publish"
+}
