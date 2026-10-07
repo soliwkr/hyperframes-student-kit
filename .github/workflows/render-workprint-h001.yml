@@ -10,6 +10,10 @@ on:
       - "scripts/preflight.mjs"
   workflow_dispatch:
 
+concurrency:
+  group: workprint-h001-render
+  cancel-in-progress: true
+
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -58,6 +62,10 @@ jobs:
           ffmpeg -y -ss 11.10 -i renders/draft.mp4 -frames:v 1 qa-frames/04-recognition.png
           ffmpeg -y -ss 14.10 -i renders/draft.mp4 -frames:v 1 qa-frames/05-cta.png
 
+      - name: Build cover from verified draft
+        working-directory: video-projects/workprint-h001
+        run: cp qa-frames/03-slow.png renders/reel-cover.png
+
       - name: Standard render
         working-directory: video-projects/workprint-h001
         run: npx --yes hyperframes render --quality standard --output renders/rush_paradox_v2.mp4
@@ -99,7 +107,11 @@ jobs:
           path: |
             video-projects/workprint-h001/renders/rush_paradox_v2.mp4
             video-projects/workprint-h001/renders/draft.mp4
+            video-projects/workprint-h001/renders/reel-cover.png
             video-projects/workprint-h001/qa-frames/*.png
+            video-projects/workprint-h001/publication.json
+            video-projects/workprint-h001/caption.txt
+            video-projects/workprint-h001/captions.srt
             video-projects/workprint-h001/qa.json
             video-projects/workprint-h001/SOURCE.json
             video-projects/workprint-h001/DESIGN.md
