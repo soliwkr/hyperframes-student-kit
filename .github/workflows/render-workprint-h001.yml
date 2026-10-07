@@ -1,0 +1,107 @@
+name: Render WORKPRINT H-001
+
+on:
+  push:
+    branches:
+      - workprint-production-os-v1
+    paths:
+      - "video-projects/workprint-h001/**"
+      - ".github/workflows/render-workprint-h001.yml"
+      - "scripts/preflight.mjs"
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install workspace dependencies
+        run: npm install
+
+      - name: Install render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          npx playwright install --with-deps chromium
+
+      - name: Hyperframes doctor
+        working-directory: video-projects/workprint-h001
+        run: npx --yes hyperframes doctor
+
+      - name: Hyperframes lint
+        working-directory: video-projects/workprint-h001
+        run: npx --yes hyperframes lint
+
+      - name: Workspace preflight
+        run: node scripts/preflight.mjs video-projects/workprint-h001
+
+      - name: Draft render
+        working-directory: video-projects/workprint-h001
+        run: |
+          mkdir -p renders qa-frames
+          npx --yes hyperframes render --quality draft --output renders/draft.mp4
+
+      - name: Extract QA frames
+        working-directory: video-projects/workprint-h001
+        run: |
+          ffmpeg -y -ss 1.30  -i renders/draft.mp4 -frames:v 1 qa-frames/01-audience-lock.png
+          ffmpeg -y -ss 4.50  -i renders/draft.mp4 -frames:v 1 qa-frames/02-chaos.png
+          ffmpeg -y -ss 7.85  -i renders/draft.mp4 -frames:v 1 qa-frames/03-slow.png
+          ffmpeg -y -ss 11.10 -i renders/draft.mp4 -frames:v 1 qa-frames/04-recognition.png
+          ffmpeg -y -ss 14.10 -i renders/draft.mp4 -frames:v 1 qa-frames/05-cta.png
+
+      - name: Standard render
+        working-directory: video-projects/workprint-h001
+        run: npx --yes hyperframes render --quality standard --output renders/rush_paradox_v2.mp4
+
+      - name: Build QA manifest
+        working-directory: video-projects/workprint-h001
+        run: |
+          DURATION=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 renders/rush_paradox_v2.mp4)
+          SHA=$(sha256sum renders/rush_paradox_v2.mp4 | cut -d' ' -f1)
+          cat > qa.json <<EOF
+          {
+            "creative_id": "rush_paradox_v2",
+            "hook_id": "H-001",
+            "pattern_id": "P-001",
+            "render": "renders/rush_paradox_v2.mp4",
+            "duration_seconds": "$DURATION",
+            "sha256": "$SHA",
+            "frames": [
+              "qa-frames/01-audience-lock.png",
+              "qa-frames/02-chaos.png",
+              "qa-frames/03-slow.png",
+              "qa-frames/04-recognition.png",
+              "qa-frames/05-cta.png"
+            ],
+            "automated_checks": {
+              "hyperframes_doctor": "pass",
+              "hyperframes_lint": "pass",
+              "workspace_preflight": "pass",
+              "draft_render": "pass",
+              "standard_render": "pass"
+            }
+          }
+          EOF
+
+      - name: Upload verified render
+        uses: actions/upload-artifact@v4
+        with:
+          name: workprint-h001-rush-paradox
+          path: |
+            video-projects/workprint-h001/renders/rush_paradox_v2.mp4
+            video-projects/workprint-h001/renders/draft.mp4
+            video-projects/workprint-h001/qa-frames/*.png
+            video-projects/workprint-h001/qa.json
+            video-projects/workprint-h001/SOURCE.json
+            video-projects/workprint-h001/DESIGN.md
+          if-no-files-found: error
+          retention-days: 30
