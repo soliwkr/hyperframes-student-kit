@@ -1,0 +1,144 @@
+name: Render V001 V3.1 Subscription Machine
+
+on:
+  push:
+    branches:
+      - v001-v31-subscription-machine
+    paths:
+      - "video-projects/v001-v31-subscription-machine/**"
+      - ".github/workflows/render-v001-v31.yml"
+      - "scripts/preflight.mjs"
+  workflow_dispatch:
+
+concurrency:
+  group: v001-v31-subscription-machine
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install workspace dependencies
+        run: npm install
+
+      - name: Install render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg curl
+          npx playwright install --with-deps chromium
+
+      - name: Capture official FTC evidence
+        run: node video-projects/v001-v31-subscription-machine/scripts/capture-evidence.mjs
+
+      - name: Fetch reviewed V2-direction voiceover
+        shell: bash
+        run: |
+          mkdir -p video-projects/v001-v31-subscription-machine/assets/audio
+          VOICE_URL=$(node -e "const v=require('./video-projects/v001-v31-subscription-machine/VOICE.json'); process.stdout.write(v.audio_url)")
+          curl --fail --location --retry 3 "$VOICE_URL" -o video-projects/v001-v31-subscription-machine/assets/audio/voice.mp3
+          ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 video-projects/v001-v31-subscription-machine/assets/audio/voice.mp3
+
+      - name: HyperFrames doctor
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: npx --yes hyperframes doctor
+
+      - name: HyperFrames lint
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: npx --yes hyperframes lint
+
+      - name: Workspace preflight
+        run: node scripts/preflight.mjs video-projects/v001-v31-subscription-machine
+
+      - name: Draft render
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: |
+          mkdir -p renders qa
+          npx --yes hyperframes render --quality draft --workers 1 --output renders/draft.mp4
+
+      - name: Standard render
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: npx --yes hyperframes render --quality standard --workers 1 --output renders/raw-standard.mp4
+
+      - name: Normalize narration master
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: |
+          ffmpeg -y -i renders/raw-standard.mp4 \
+            -c:v copy \
+            -af "loudnorm=I=-16:LRA=7:TP=-1" \
+            -c:a aac -b:a 192k \
+            renders/v001-v31-subscription-machine.mp4
+
+      - name: Extract QA frames
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: |
+          ffmpeg -y -ss 3  -i renders/v001-v31-subscription-machine.mp4 -frames:v 1 qa/01-amazon.png
+          ffmpeg -y -ss 11 -i renders/v001-v31-subscription-machine.mp4 -frames:v 1 qa/02-join.png
+          ffmpeg -y -ss 20 -i renders/v001-v31-subscription-machine.mp4 -frames:v 1 qa/03-exit.png
+          ffmpeg -y -ss 32 -i renders/v001-v31-subscription-machine.mp4 -frames:v 1 qa/04-economics.png
+          ffmpeg -y -ss 43 -i renders/v001-v31-subscription-machine.mp4 -frames:v 1 qa/05-dark-patterns.png
+          ffmpeg -y -ss 52 -i renders/v001-v31-subscription-machine.mp4 -frames:v 1 qa/06-thesis.png
+
+      - name: Extract contiguous transition strips
+        working-directory: video-projects/v001-v31-subscription-machine
+        run: |
+          ffmpeg -y -ss 14 -t 3 -i renders/v001-v31-subscription-machine.mp4 \
+            -vf "fps=4,scale=480:270,tile=4x3" -frames:v 1 qa/strip-join-to-exit.png
+          ffmpeg -y -ss 46 -t 3 -i renders/v001-v31-subscription-machine.mp4 \
+            -vf "fps=4,scale=480:270,tile=4x3" -frames:v 1 qa/strip-final-pullback.png
+
+      - name: Measure master
+        working-directory: video-projects/v001-v31-subscription-machine
+        shell: bash
+        run: |
+          ffprobe -v error -show_entries stream=index,codec_type,codec_name -show_entries format=duration -of json renders/v001-v31-subscription-machine.mp4 > qa/ffprobe.json
+          ffmpeg -hide_banner -i renders/v001-v31-subscription-machine.mp4 \
+            -af "loudnorm=I=-16:LRA=7:TP=-1:print_format=json" -f null - 2> qa/loudness.txt || true
+          sha256sum renders/v001-v31-subscription-machine.mp4 > qa/sha256.txt
+
+      - name: Build render manifest
+        working-directory: video-projects/v001-v31-subscription-machine
+        shell: bash
+        run: |
+          DURATION=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 renders/v001-v31-subscription-machine.mp4)
+          SHA=$(cut -d' ' -f1 qa/sha256.txt)
+          cat > qa/render-manifest.json <<EOF
+          {
+            "project": "v001-v31-subscription-machine",
+            "duration_seconds": "$DURATION",
+            "sha256": "$SHA",
+            "evidence_capture": "pass",
+            "hyperframes_doctor": "pass",
+            "hyperframes_lint": "pass",
+            "workspace_preflight": "pass",
+            "standard_render": "pass",
+            "audio_normalization_target_lufs": -16,
+            "audio_true_peak_target_dbtp": -1
+          }
+          EOF
+
+      - name: Upload review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v001-v31-subscription-machine
+          path: |
+            video-projects/v001-v31-subscription-machine/renders/v001-v31-subscription-machine.mp4
+            video-projects/v001-v31-subscription-machine/qa/**
+            video-projects/v001-v31-subscription-machine/assets/captures/**
+            video-projects/v001-v31-subscription-machine/BRIEF.md
+            video-projects/v001-v31-subscription-machine/DESIGN.md
+            video-projects/v001-v31-subscription-machine/SCRIPT.md
+            video-projects/v001-v31-subscription-machine/STORYBOARD.md
+            video-projects/v001-v31-subscription-machine/CLAIMS.json
+            video-projects/v001-v31-subscription-machine/VERIFY.md
+          if-no-files-found: error
+          retention-days: 30
