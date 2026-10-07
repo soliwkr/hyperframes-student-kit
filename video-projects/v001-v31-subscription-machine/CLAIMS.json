@@ -1,0 +1,37 @@
+{
+  "version": "v3.1",
+  "claims": [
+    {
+      "id": "amazon-settlement",
+      "status": "SETTLED",
+      "claim": "Amazon agreed to a $2.5 billion settlement resolving FTC allegations concerning Prime enrollment and cancellation practices.",
+      "source": "https://www.ftc.gov/news-events/news/press-releases/2025/09/ftc-secures-historic-25-billion-settlement-against-amazon",
+      "institution": "Federal Trade Commission",
+      "date": "2025-09-25"
+    },
+    {
+      "id": "uber-cancel-friction",
+      "status": "ALLEGED",
+      "claim": "According to the FTC complaint, some Uber One users could be required to navigate as many as 23 screens and take as many as 32 actions to cancel.",
+      "source": "https://www.ftc.gov/news-events/news/press-releases/2025/12/ftc-states-file-amended-complaint-against-uber-deceptive-billing-cancellation-practices",
+      "institution": "Federal Trade Commission",
+      "date": "2025-12"
+    },
+    {
+      "id": "dark-patterns",
+      "status": "REPORT",
+      "claim": "FTC staff describes dark patterns as design practices that can obscure, subvert, or impair consumer choice and includes difficult subscription cancellation among the tactics discussed.",
+      "source": "https://www.ftc.gov/reports/bringing-dark-patterns-light",
+      "institution": "Federal Trade Commission",
+      "date": "2022-09"
+    },
+    {
+      "id": "negative-option-2026",
+      "status": "RULEMAKING",
+      "claim": "In 2026 the FTC opened a new advance notice of proposed rulemaking on negative option marketing after the 2024 amended rule had been vacated by the Eighth Circuit in July 2025.",
+      "source": "https://www.ftc.gov/news-events/news/press-releases/2026/03/ftc-seeks-public-comment-response-advance-notice-proposed-rulemaking-regarding-negative-option",
+      "institution": "Federal Trade Commission",
+      "date": "2026-03-11"
+    }
+  ]
+}
