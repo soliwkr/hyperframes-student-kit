@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <title>WORKPRINT H-001 — Rush Paradox</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=block" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f0eadf;
+      --paper-hi: #f8f3e9;
+      --paper-lo: #ded4c5;
+      --ink: #191713;
+      --ink-2: #403d37;
+      --muted: #746f66;
+      --red: #a63d2f;
+      --red-deep: #8f3429;
+      --red-soft: #e9886f;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, Arial, sans-serif;
+    }
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(25,23,19,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(25,23,19,.025) 1px, transparent 1px),
+        var(--paper);
+      background-size: 80px 80px, 80px 80px, auto;
+    }
+    .grain {
+      position: absolute; inset: 0; pointer-events: none; opacity: .18; z-index: 80;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(25,23,19,.09) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 55%, rgba(25,23,19,.07) 0 1px, transparent 1px);
+      background-size: 17px 17px, 23px 23px;
+      mix-blend-mode: multiply;
+    }
+    .header {
+      position: absolute; top: 54px; left: 64px; right: 64px;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 70; font: 600 18px/1 "IBM Plex Mono", monospace;
+      letter-spacing: .16em; text-transform: uppercase;
+    }
+    .header .accent { color: var(--red); }
+    .header .muted { color: rgba(25,23,19,.42); }
+    .beat {
+      position: absolute; inset: 0; opacity: 0; overflow: hidden;
+    }
+    .kicker {
+      font: 600 22px/1.3 "IBM Plex Mono", monospace;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--red);
+    }
+    .display {
+      font-family: Newsreader, Georgia, serif;
+      font-weight: 600; letter-spacing: -.045em; line-height: .93;
+    }
+    .body {
+      font-size: 32px; line-height: 1.42; color: var(--ink-2);
+    }
+    .mono {
+      font-family: "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .red-rule {
+      height: 8px; width: 160px; background: var(--red);
+      transform-origin: left center;
+    }
+
+    /* Beat 1 */
+    #b1 { background: var(--paper); }
+    .ticket {
+      position: absolute; left: 64px; top: 280px; width: 952px; min-height: 1040px;
+      padding: 72px 64px; background: var(--paper-hi);
+      border: 2px solid rgba(25,23,19,.14);
+      box-shadow: 0 45px 90px rgba(38,29,19,.12);
+      transform-origin: 50% 0%;
+    }
+    .ticket:before, .ticket:after {
+      content: ""; position: absolute; left: -2px; right: -2px; height: 18px;
+      background: repeating-linear-gradient(90deg, transparent 0 20px, var(--paper) 20px 40px);
+    }
+    .ticket:before { top: -10px; }
+    .ticket:after { bottom: -10px; }
+    #b1 h1 { margin: 70px 0 30px; font-size: 132px; }
+    .roles { margin-top: 86px; border-top: 2px solid rgba(25,23,19,.15); padding-top: 34px; }
+    .roles span { display: block; font: 600 29px/1.9 "IBM Plex Mono", monospace; letter-spacing: .08em; }
+
+    /* Beat 2 */
+    #b2 { background: var(--paper); }
+    .chaos-wrap { position: absolute; inset: 240px 64px 160px; }
+    #b2 h2 { margin: 0; font-size: 152px; max-width: 930px; }
+    .queue {
+      margin-top: 130px; display: grid; gap: 22px;
+    }
+    .queue-row {
+      height: 98px; border: 2px solid rgba(25,23,19,.16); background: var(--paper-hi);
+      display: grid; grid-template-columns: 150px 1fr 150px; align-items: center;
+      padding: 0 28px; overflow: hidden;
+    }
+    .queue-row .num { font: 600 23px "IBM Plex Mono", monospace; color: var(--red); }
+    .queue-row .bar { height: 14px; background: var(--ink); transform-origin: left; }
+    .queue-row .time { text-align: right; font: 600 23px "IBM Plex Mono", monospace; color: var(--muted); }
+    .rush-stamp {
+      position: absolute; right: 0; bottom: 30px; padding: 18px 22px;
+      border: 5px solid var(--red); color: var(--red); font: 600 34px/1 "IBM Plex Mono", monospace;
+      transform: rotate(-7deg);
+    }
+
+    /* Beat 3 */
+    #b3 { background: var(--ink); color: var(--paper-hi); }
+    .slow-wrap { position: absolute; left: 64px; right: 64px; top: 320px; }
+    #b3 .kicker { color: var(--red-soft); }
+    #b3 h2 { margin: 52px 0 0; font-size: 166px; max-width: 920px; }
+    .slow-line {
+      position: absolute; left: 64px; right: 64px; bottom: 420px; height: 3px; background: rgba(248,243,233,.18);
+    }
+    .slow-cursor {
+      position: absolute; left: 64px; bottom: 404px; width: 38px; height: 36px; background: var(--red-soft);
+    }
+    .slow-note {
+      position: absolute; left: 64px; bottom: 250px; right: 130px;
+      font: 500 26px/1.5 "IBM Plex Mono", monospace; color: rgba(248,243,233,.48);
+    }
+
+    /* Beat 4 */
+    #b4 { background: var(--ink); }
+    .recognition-card {
+      position: absolute; left: 64px; right: 64px; top: 310px;
+      min-height: 1120px; padding: 72px 62px;
+      background: var(--paper-hi); color: var(--ink);
+      box-shadow: 0 55px 110px rgba(0,0,0,.28);
+      border-left: 14px solid var(--red);
+    }
+    #b4 h2 { margin: 50px 0 0; font-size: 106px; line-height: .98; }
+    .meaning {
+      margin-top: 88px; padding-top: 44px; border-top: 2px solid rgba(25,23,19,.15);
+      font-size: 34px; line-height: 1.45; color: var(--ink-2);
+    }
+    .meaning strong { color: var(--red-deep); }
+    .not-verdict {
+      position: absolute; bottom: 72px; left: 62px;
+      font: 600 18px/1.4 "IBM Plex Mono", monospace; letter-spacing: .12em; color: var(--muted);
+    }
+
+    /* Beat 5 */
+    #b5 { background: var(--paper); }
+    .cta-wrap { position: absolute; inset: 260px 64px 120px; display: flex; flex-direction: column; }
+    .timeline-strip {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; border: 2px solid rgba(25,23,19,.14);
+    }
+    .timeline-strip div {
+      padding: 32px 20px; text-align: center; font: 600 22px/1 "IBM Plex Mono", monospace;
+      letter-spacing: .1em;
+    }
+    .timeline-strip div + div { border-left: 2px solid rgba(25,23,19,.14); }
+    .timeline-strip .mid { background: var(--ink); color: var(--paper-hi); }
+    #b5 h2 { margin: 120px 0 40px; font-size: 118px; }
+    .cta-button {
+      margin-top: 80px; background: var(--ink); color: var(--paper-hi);
+      border-radius: 999px; padding: 34px 42px; width: 100%;
+      font-size: 34px; font-weight: 700; text-align: center;
+    }
+    .working {
+      margin-top: auto; display: flex; justify-content: space-between;
+      border-top: 2px solid rgba(25,23,19,.14); padding-top: 28px;
+      font: 500 17px/1.4 "IBM Plex Mono", monospace; letter-spacing: .1em; color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<div id="root" data-composition-id="workprint-h001-rush-paradox" data-start="0" data-duration="15" data-width="1080" data-height="1920">
+  <div class="header">
+    <span>WORKPRINT <span class="accent">/ FIELD TEST 01</span></span>
+    <span class="muted">H-001 / P-001</span>
+  </div>
+
+  <section id="b1" class="beat">
+    <div class="ticket">
+      <div class="kicker">Audience lock / shift record</div>
+      <div class="red-rule"></div>
+      <h1 class="display">WORKED<br>FAST FOOD?</h1>
+      <p class="body">Not “worked a busy job.” The kind where the queue kept moving whether you were ready or not.</p>
+      <div class="roles">
+        <span>CREW</span>
+        <span>TRAINER</span>
+        <span>SHIFT LEADER</span>
+        <span>MANAGER</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="b2" class="beat">
+    <div class="chaos-wrap">
+      <div class="kicker">Capability / learned under pressure</div>
+      <h2 class="display">GOOD AT<br>CHAOS.</h2>
+      <div class="queue">
+        <div class="queue-row"><span class="num">01</span><span class="bar"></span><span class="time">00:42</span></div>
+        <div class="queue-row"><span class="num">02</span><span class="bar"></span><span class="time">01:08</span></div>
+        <div class="queue-row"><span class="num">03</span><span class="bar"></span><span class="time">01:31</span></div>
+        <div class="queue-row"><span class="num">04</span><span class="bar"></span><span class="time">02:04</span></div>
+      </div>
+      <div class="rush-stamp">RUSH MODE</div>
+    </div>
+  </section>
+
+  <section id="b3" class="beat">
+    <div class="slow-wrap">
+      <div class="kicker">Outside the shift / lower stakes</div>
+      <h2 class="display">BAD<br>AT SLOW?</h2>
+    </div>
+    <div class="slow-line"></div>
+    <div class="slow-cursor"></div>
+    <div class="slow-note">WHEN NOTHING IS ACTUALLY ON FIRE — DOES DELAY STILL FEEL WRONG?</div>
+  </section>
+
+  <section id="b4" class="beat">
+    <div class="recognition-card">
+      <div class="kicker">A more precise reading to test</div>
+      <div class="red-rule"></div>
+      <h2 class="display">Maybe speed started to mean<br><span style="color:var(--red-deep)">COMPETENCE + SAFETY.</span></h2>
+      <p class="meaning">Useful in a rush. Worth checking when ordinary life is moving at ordinary speed. <strong>This is a hypothesis, not a verdict about your personality.</strong></p>
+      <div class="not-verdict">EDUCATIONAL SELF-REFLECTION · NOT DIAGNOSIS</div>
+    </div>
+  </section>
+
+  <section id="b5" class="beat">
+    <div class="cta-wrap">
+      <div class="timeline-strip">
+        <div>BEFORE</div><div class="mid">RUSH</div><div>NOW</div>
+      </div>
+      <h2 class="display">What did the job train into you — and what are you still carrying?</h2>
+      <p class="body">Compare your own timeline. Keep the capability. Test the carry-over.</p>
+      <div class="cta-button">TAKE THE FREE FIELD TEST ↓</div>
+      <div class="working"><span>WORKPRINT / WORKING TITLE</span><span>workprint.soliwkr.workers.dev</span></div>
+    </div>
+  </section>
+
+  <div class="grain"></div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+
+  gsap.set(["#b1","#b2","#b3","#b4","#b5"], { opacity: 0 });
+  gsap.set(".ticket", { y: -1000, rotation: -2 });
+  gsap.set("#b1 .red-rule", { scaleX: 0 });
+  gsap.set("#b2 h2", { y: 150, opacity: 0 });
+  gsap.set(".queue-row", { x: 120, opacity: 0 });
+  gsap.set(".queue-row .bar", { scaleX: .18 });
+  gsap.set(".rush-stamp", { scale: 1.8, opacity: 0, rotation: -18 });
+  gsap.set("#b3 h2", { x: -140, opacity: 0, filter: "blur(14px)" });
+  gsap.set(".slow-cursor", { x: 0, scaleX: .7 });
+  gsap.set(".recognition-card", { y: 180, opacity: 0 });
+  gsap.set("#b4 .red-rule", { scaleX: 0 });
+  gsap.set(".timeline-strip", { y: -60, opacity: 0 });
+  gsap.set("#b5 h2", { y: 80, opacity: 0 });
+  gsap.set(".cta-button", { y: 60, opacity: 0 });
+
+  // BEAT 1 — audience lock / paper ticket slam
+  tl.set("#b1", { opacity: 1 }, 0);
+  tl.to(".ticket", { y: 0, rotation: 0, duration: .62, ease: "back.out(1.2)" }, .12);
+  tl.to("#b1 .red-rule", { scaleX: 1, duration: .34, ease: "expo.out" }, .58);
+  tl.to(".ticket", { y: 18, duration: 1.25, ease: "sine.inOut" }, 1.0);
+  // EXIT — upward ticket tear into next beat
+  tl.to(".ticket", { y: -1180, rotation: .8, duration: .36, ease: "expo.in" }, 2.28);
+  tl.set("#b1", { opacity: 0 }, 2.58);
+
+  // BEAT 2 — queue compresses into competence
+  tl.set("#b2", { opacity: 1 }, 2.52);
+  tl.to("#b2 h2", { y: 0, opacity: 1, duration: .44, ease: "expo.out" }, 2.64);
+  tl.to(".queue-row", { x: 0, opacity: 1, duration: .35, stagger: .12, ease: "power2.out" }, 3.08);
+  tl.to(".queue-row .bar", { scaleX: 1, duration: .9, stagger: .08, ease: "power3.out" }, 3.28);
+  tl.to(".rush-stamp", { scale: 1, opacity: 1, rotation: -7, duration: .32, ease: "back.out(2.2)" }, 4.48);
+  tl.to(".queue", { y: -20, duration: 1.0, ease: "sine.inOut" }, 4.7);
+  // EXIT — red stamp expands to wipe the frame
+  tl.to(".rush-stamp", { scale: 18, rotation: 0, duration: .42, ease: "expo.in" }, 5.75);
+  tl.set("#b2", { opacity: 0 }, 6.16);
+
+  // BEAT 3 — negative-space slowdown
+  tl.set("#b3", { opacity: 1 }, 6.08);
+  tl.to("#b3 h2", { x: 0, opacity: 1, filter: "blur(0px)", duration: .5, ease: "expo.out" }, 6.18);
+  tl.to(".slow-cursor", { x: 850, duration: 2.25, ease: "power1.inOut" }, 6.55);
+  tl.to(".slow-cursor", { scaleX: 7, duration: .3, ease: "expo.in" }, 8.72);
+  tl.to("#b3 h2", { x: 80, opacity: .15, filter: "blur(18px)", duration: .34, ease: "power2.in" }, 9.18);
+  tl.to("#b3", { opacity: 0, duration: .18 }, 9.42);
+
+  // BEAT 4 — recognition: motion stops, meaning lands
+  tl.set("#b4", { opacity: 1 }, 9.42);
+  tl.to(".recognition-card", { y: 0, opacity: 1, duration: .55, ease: "power3.out" }, 9.5);
+  tl.to("#b4 .red-rule", { scaleX: 1, duration: .42, ease: "expo.out" }, 9.92);
+  tl.to(".recognition-card", { y: -8, duration: 1.9, ease: "sine.inOut" }, 10.45);
+  tl.to(".recognition-card", { y: -1250, duration: .42, ease: "expo.in" }, 12.32);
+  tl.set("#b4", { opacity: 0 }, 12.72);
+
+  // BEAT 5 — CTA hold
+  tl.set("#b5", { opacity: 1 }, 12.66);
+  tl.to(".timeline-strip", { y: 0, opacity: 1, duration: .35, ease: "power2.out" }, 12.72);
+  tl.to("#b5 h2", { y: 0, opacity: 1, duration: .46, ease: "expo.out" }, 12.86);
+  tl.to(".cta-button", { y: 0, opacity: 1, duration: .38, ease: "back.out(1.3)" }, 13.18);
+  tl.to(".cta-button", { scale: 1.015, duration: .65, yoyo: true, repeat: 1, ease: "sine.inOut" }, 13.85);
+
+  // Law #11: deterministic duration anchor.
+  tl.to({}, { duration: 15 }, 0);
+  window.__timelines["workprint-h001-rush-paradox"] = tl;
+</script>
+</body>
+</html>
