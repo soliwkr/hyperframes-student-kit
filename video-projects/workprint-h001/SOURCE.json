@@ -1,0 +1,9 @@
+{
+  "source_repo": "soliwkr/workprint",
+  "source_ref": "production-os-v1",
+  "source_path": "production/campaigns/field_test_01/rush_paradox_v2.json",
+  "creative_id": "rush_paradox_v2",
+  "hook_id": "H-001",
+  "pattern_id": "P-001",
+  "renderer_contract": "WORKPRINT Production OS V1"
+}
