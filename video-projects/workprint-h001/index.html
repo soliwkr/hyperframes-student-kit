@@ -181,7 +181,7 @@
   </style>
 </head>
 <body>
-<div id="root" data-composition-id="workprint-h001-rush-paradox" data-start="0" data-duration="15" data-width="1080" data-height="1920">
+<div id="root" data-composition-id="workprint-h001-rush-paradox" data-start="0" data-duration="19" data-width="1080" data-height="1920">
   <div class="header">
     <span>WORKPRINT <span class="accent">/ FIELD TEST 01</span></span>
     <span class="muted">H-001 / P-001</span>
@@ -276,45 +276,45 @@
   tl.to("#b1 .red-rule", { scaleX: 1, duration: .34, ease: "expo.out" }, .58);
   tl.to(".ticket", { y: 18, duration: 1.25, ease: "sine.inOut" }, 1.0);
   // EXIT — upward ticket tear into next beat
-  tl.to(".ticket", { y: -1180, rotation: .8, duration: .36, ease: "expo.in" }, 2.28);
-  tl.set("#b1", { opacity: 0 }, 2.58);
+  tl.to(".ticket", { y: -1180, rotation: .8, duration: .38, ease: "expo.in" }, 2.76);
+  tl.set("#b1", { opacity: 0 }, 3.16);
 
   // BEAT 2 — queue compresses into competence
-  tl.set("#b2", { opacity: 1 }, 2.52);
-  tl.to("#b2 h2", { y: 0, opacity: 1, duration: .44, ease: "expo.out" }, 2.64);
-  tl.to(".queue-row", { x: 0, opacity: 1, duration: .35, stagger: .12, ease: "power2.out" }, 3.08);
-  tl.to(".queue-row .bar", { scaleX: 1, duration: .9, stagger: .08, ease: "power3.out" }, 3.28);
-  tl.to(".rush-stamp", { scale: 1, opacity: 1, rotation: -7, duration: .32, ease: "back.out(2.2)" }, 4.48);
-  tl.to(".queue", { y: -20, duration: 1.0, ease: "sine.inOut" }, 4.7);
+  tl.set("#b2", { opacity: 1 }, 3.08);
+  tl.to("#b2 h2", { y: 0, opacity: 1, duration: .48, ease: "expo.out" }, 3.22);
+  tl.to(".queue-row", { x: 0, opacity: 1, duration: .4, stagger: .14, ease: "power2.out" }, 3.76);
+  tl.to(".queue-row .bar", { scaleX: 1, duration: 1.05, stagger: .1, ease: "power3.out" }, 4.02);
+  tl.to(".rush-stamp", { scale: 1, opacity: 1, rotation: -7, duration: .36, ease: "back.out(2.2)" }, 5.36);
+  tl.to(".queue", { y: -20, duration: 1.35, ease: "sine.inOut" }, 5.68);
   // EXIT — red stamp expands to wipe the frame
-  tl.to(".rush-stamp", { scale: 18, rotation: 0, duration: .42, ease: "expo.in" }, 5.75);
-  tl.set("#b2", { opacity: 0 }, 6.16);
+  tl.to(".rush-stamp", { scale: 18, rotation: 0, duration: .45, ease: "expo.in" }, 6.9);
+  tl.set("#b2", { opacity: 0 }, 7.36);
 
   // BEAT 3 — negative-space slowdown
-  tl.set("#b3", { opacity: 1 }, 6.08);
-  tl.to("#b3 h2", { x: 0, opacity: 1, filter: "blur(0px)", duration: .5, ease: "expo.out" }, 6.18);
-  tl.to(".slow-cursor", { x: 850, duration: 2.25, ease: "power1.inOut" }, 6.55);
-  tl.to(".slow-cursor", { scaleX: 7, duration: .3, ease: "expo.in" }, 8.72);
-  tl.to("#b3 h2", { x: 80, opacity: .15, filter: "blur(18px)", duration: .34, ease: "power2.in" }, 9.18);
-  tl.to("#b3", { opacity: 0, duration: .18 }, 9.42);
+  tl.set("#b3", { opacity: 1 }, 7.28);
+  tl.to("#b3 h2", { x: 0, opacity: 1, filter: "blur(0px)", duration: .52, ease: "expo.out" }, 7.42);
+  tl.to(".slow-cursor", { x: 850, duration: 2.7, ease: "power1.inOut" }, 7.9);
+  tl.to(".slow-cursor", { scaleX: 7, duration: .32, ease: "expo.in" }, 10.64);
+  tl.to("#b3 h2", { x: 80, opacity: .15, filter: "blur(18px)", duration: .36, ease: "power2.in" }, 11.03);
+  tl.to("#b3", { opacity: 0, duration: .2 }, 11.34);
 
   // BEAT 4 — recognition: motion stops, meaning lands
-  tl.set("#b4", { opacity: 1 }, 9.42);
-  tl.to(".recognition-card", { y: 0, opacity: 1, duration: .55, ease: "power3.out" }, 9.5);
-  tl.to("#b4 .red-rule", { scaleX: 1, duration: .42, ease: "expo.out" }, 9.92);
-  tl.to(".recognition-card", { y: -8, duration: 1.9, ease: "sine.inOut" }, 10.45);
-  tl.to(".recognition-card", { y: -1250, duration: .42, ease: "expo.in" }, 12.32);
-  tl.set("#b4", { opacity: 0 }, 12.72);
+  tl.set("#b4", { opacity: 1 }, 11.3);
+  tl.to(".recognition-card", { y: 0, opacity: 1, duration: .58, ease: "power3.out" }, 11.4);
+  tl.to("#b4 .red-rule", { scaleX: 1, duration: .42, ease: "expo.out" }, 11.92);
+  tl.to(".recognition-card", { y: -8, duration: 2.85, ease: "sine.inOut" }, 12.45);
+  tl.to(".recognition-card", { y: -1250, duration: .44, ease: "expo.in" }, 15.3);
+  tl.set("#b4", { opacity: 0 }, 15.76);
 
   // BEAT 5 — CTA hold
-  tl.set("#b5", { opacity: 1 }, 12.66);
-  tl.to(".timeline-strip", { y: 0, opacity: 1, duration: .35, ease: "power2.out" }, 12.72);
-  tl.to("#b5 h2", { y: 0, opacity: 1, duration: .46, ease: "expo.out" }, 12.86);
-  tl.to(".cta-button", { y: 0, opacity: 1, duration: .38, ease: "back.out(1.3)" }, 13.18);
-  tl.to(".cta-button", { scale: 1.015, duration: .65, yoyo: true, repeat: 1, ease: "sine.inOut" }, 13.85);
+  tl.set("#b5", { opacity: 1 }, 15.68);
+  tl.to(".timeline-strip", { y: 0, opacity: 1, duration: .38, ease: "power2.out" }, 15.78);
+  tl.to("#b5 h2", { y: 0, opacity: 1, duration: .5, ease: "expo.out" }, 16.0);
+  tl.to(".cta-button", { y: 0, opacity: 1, duration: .4, ease: "back.out(1.3)" }, 16.48);
+  tl.to(".cta-button", { scale: 1.015, duration: .7, yoyo: true, repeat: 1, ease: "sine.inOut" }, 17.18);
 
   // Law #11: deterministic duration anchor.
-  tl.to({}, { duration: 15 }, 0);
+  tl.to({}, { duration: 19 }, 0);
   window.__timelines["workprint-h001-rush-paradox"] = tl;
 </script>
 </body>
